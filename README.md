@@ -63,24 +63,37 @@
 
 ## 🔧 설치 및 적용 방법 (Setup Guide)
 
-1.  **1단계: 엔진 스크립트 `clone`**
-    이 레포지토리(`my-utils-powershell`)를 님의 PC 원하는 경로에 `clone`합니다. (예: `C:\projects\my-utils-powershell`)
+### 1단계: 스크립트 '엔진' 클론
 
-2.  **2단계: 엔진 스크립트 경로 설정**
-    `clone`한 폴더 안의 스크립트 2개를 수정해야 합니다.
-    * **`ff.ps1` 수정:** `$ffmpegPath` 변수의 경로를 님의 `ffmpeg.exe` 실제 위치로 변경합니다.
-    * **`f1.ps1` / `f2.ps1` 수정 (선택):** 이 스크립트들은 `ff.ps1`을 호출합니다. 만약 `ff.ps1`이 `f1.ps1`과 다른 폴더에 있다면 경로를 수정해야 합니다. (같은 폴더에 있다면 수정 불필요)
+이 레포지토리(`my-utils-powershell`)를 님의 PC 원하는 경로에 `clone`합니다.
 
-3.  **3단계: 런처 함수 프로필에 등록**
-    터미널에서 `code $PROFILE` (또는 `notepad $PROFILE`)을 입력하여 님의 PowerShell 프로필 파일을 엽니다.
-    프로필 파일 맨 아래에 아래 **[런처 함수 코드]**를 **전체 복사**하여 붙여넣습니다.
+```bash
+# 예시: C:\projects\my-utils-powershell 경로에 클론
+git clone [https://github.com/](https://github.com/)[Your_ID]/my-utils-powershell.git C:\projects\my-utils-powershell
+```
 
-4.  **4단계: 런처 함수 경로 설정 (가장 중요!)**
-    방금 프로필에 붙여넣은 코드의 **맨 윗부분**을 님의 환경에 맞게 수정합니다.
-    * `$myScriptFolder`: **1단계**에서 `clone`한 이 레포지토리의 경로로 수정합니다. (예: `C:\projects\my-utils-powershell`)
-    * `$pythonExePath`: 님의 `python.exe` 실제 경로로 수정합니다.
+### 2단계: '엔진' 스크립트 경로 설정 (중요!)
 
-5.  **PowerShell 재시작:** 터미널을 껐다 켜면 `f1`, `f2`, `ytpl` 명령어가 활성화됩니다.
+`clone`한 폴더 안의 `ff.ps1` 파일 1개를 수정해야 합니다.
+
+* **파일:** `ff.ps1`
+* **수정:** 파일 상단의 `$ffmpegPath` 변수의 경로를 님의 `ffmpeg.exe` 실제 위치로 변경합니다. (아래 예시 참고)
+    ```powershell
+    # (!! 사용자 수정 필요 !!) 님의 ffmpeg.exe 실제 경로로 변경하세요.
+    $ffmpegPath = "C:\Program Files\ffmpeg\bin\ffmpeg.exe" # <-- 님의 경로로 수정
+    ```
+
+### 3단계: '런처' 함수 프로필에 등록
+
+터미널에서 `code $PROFILE` (또는 `notepad $PROFILE`)을 입력하여 님의 PowerShell 프로필 파일을 엽니다.
+프로필 파일 맨 아래에 아래 **[런처 함수 코드]**를 **전체 복사**하여 붙여넣습니다.
+
+### 4단계: '런처' 함수 경로 설정 (!! 가장 중요 !!)
+
+방금 프로필에 붙여넣은 런처 코드의 **맨 윗부분**에 있는 **변수 2개**를 님의 환경에 맞게 **반드시 수정**해야 합니다.
+
+* `$myScriptFolder`: **1단계**에서 `clone`한 이 레포지토리의 경로로 수정합니다.
+* `$pythonExePath`: 님의 `python.exe` 실제 경로로 수정합니다.
 
 ---
 
@@ -88,14 +101,18 @@
 
 ```powershell
 # ===================================================================
-#          나만의 PowerShell 단축 명령어 및 함수 설정
+#          커스텀 영상 다운로드 런처
 # ===================================================================
 
-# --- 1. 공통 설정 (사용자 수정 필요) ---
-# 이 레포지토리를 clone한 경로로 수정해야 합니다.
-$myScriptFolder = "C:\yt-dlp" # 예시: C:\projects\my-utils-powershell
+# --- 1. (!! 사용자 수정 필요 !!) ---
+# 1단계에서 clone한 이 레포지토리의 경로로 수정하세요.
+$myScriptFolder = "C:\projects\my-utils-powershell"
 
-# --- 2. f1, f2 단축 실행 함수 ---
+# 님의 python.exe 실제 경로로 수정하세요.
+$pythonExePath = "C:\Python311\python.exe" 
+# ---
+
+# --- 2. f1, f2 단축 실행 함수 (수정 불필요) ---
 function _Invoke-FfmpegScript {
     param([string]$ScriptName, [object[]]$UserArgs)
     $finalUrl = $null; $nonUrlArgs = @()
@@ -110,11 +127,8 @@ function _Invoke-FfmpegScript {
 function f1 { _Invoke-FfmpegScript -ScriptName "f1.ps1" -UserArgs $args }
 function f2 { _Invoke-FfmpegScript -ScriptName "f2.ps1" -UserArgs $args }
 
-# --- 3. ytpl 단축 실행 함수 (사용자 수정 필요) ---
+# --- 3. ytpl 단축 실행 함수 (수정 불필요) ---
 function ytpl {
-    # --- 사용자 수정 필요 (Python 경로) ---
-    $pythonExePath = "$env:USERPROFILE\scoop\apps\python\current\python.exe"
-    # ---
     $pythonScriptPath = "$myScriptFolder\ytpl.py"
     $finalUrl = $null; $finalQuality = $null; $finalLang = $null; $unidentifiedArgs = @()
     foreach ($arg in $args) {
@@ -132,4 +146,4 @@ function ytpl {
     & $pythonExePath $pythonScriptPath $finalArgs
 }
 
-Write-Host "✅ 나만의 단축 명령어 (f1, f2, ytpl)가 모두 로드되었습니다!" -ForegroundColor Green
+Write-Host "✅ 커스텀 다운로드 명령어 (f1, f2, ytpl)가 모두 로드되었습니다!" -ForegroundColor Green
